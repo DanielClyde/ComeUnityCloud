@@ -11,7 +11,7 @@ export enum Range {
 
 export interface DeviceStats {
   deviceToken?: string;
-  notificationEnpointArn?: string;
+  notificationEndpointArn?: string;
   platform?: 'android' | 'ios';
 }
 
@@ -23,14 +23,18 @@ export interface UserPreferences {
 export interface UserDTO extends DBModel {
   firstname: string;
   lastname: string;
+  email: string;
+  interests: string[];
   deviceStats: DeviceStats;
   preferences: UserPreferences;
 }
 
-export class User implements DBModel {
+export class User implements UserDTO {
   public _id: ObjectID;
   public firstname: string;
   public lastname: string;
+  public email: string;
+  public interests: string[];
   public deviceStats: DeviceStats;
   public preferences: UserPreferences;
   public createdAt: Date;
@@ -41,6 +45,8 @@ export class User implements DBModel {
     this._id = info._id || new ObjectID();
     this.firstname = info.firstname;
     this.lastname = info.lastname;
+    this.email = info.email;
+    this.interests = info.interests || [];
     this.deviceStats = info.deviceStats;
     this.preferences = info.preferences;
     this.createdAt = info.createdAt;
