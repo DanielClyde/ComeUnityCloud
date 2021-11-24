@@ -1,4 +1,4 @@
-import { Range, User, UserDTO } from './../models/User';
+import { Range, User, UserDTO } from 'comeunitymodels';
 import { UserService } from './user.service';
 import { DB } from './../db';
 import { MockDB } from '../../../mocks/db.mock';
@@ -22,7 +22,7 @@ describe('User Service', () => {
       firstname: 'Danny',
       lastname: 'Clyde',
       email: 'dantheman27c@gmail.com',
-      deviceStats: {
+      device: {
         platform: 'ios',
       },
       preferences: {},
@@ -30,11 +30,11 @@ describe('User Service', () => {
     } as UserDTO);
     assert.isTrue(res.success);
     assert.isTrue(res.user instanceof User);
-    assert.approximately(res.user.createdAt.getTime(), new Date().getTime(), 100);
+    assert.approximately(res.user.createdAt.getTime(), new Date().getTime(), 1000);
 
     const found = await db.users.findById(res.user._id);
     assert.deepEqual(res.user, found);
-    assert.approximately(found.createdAt.getTime(), new Date().getTime(), 100);
+    assert.approximately(found.createdAt.getTime(), new Date().getTime(), 1000);
   });
 
   it('Should be able to update a user', async () => {
@@ -42,7 +42,7 @@ describe('User Service', () => {
       firstname: 'Danny',
       lastname: 'Clyde',
       email: 'dantheman27c@gmail.com',
-      deviceStats: {
+      device: {
         platform: 'ios',
       },
       preferences: {},
@@ -77,7 +77,7 @@ describe('User Service', () => {
       firstname: 'Danny',
       lastname: 'Clyde',
       email: 'dantheman27c@gmail.com',
-      deviceStats: {
+      device: {
         platform: 'ios',
       },
       preferences: {},
@@ -92,14 +92,14 @@ describe('User Service', () => {
     const update = await db.users.updateUserDeviceStats(user._id, {
       platform: 'android',
       notificationEndpointArn: 'test_arn',
-      deviceToken: 'test_token',
+      pushDeviceToken: 'test_token',
     });
     assert.isTrue(update.success);
     assert.isTrue(update.user instanceof User);
-    assert.deepEqual(update.user.deviceStats, {
+    assert.deepEqual(update.user.device, {
       platform: 'android',
       notificationEndpointArn: 'test_arn',
-      deviceToken: 'test_token',
+      pushDeviceToken: 'test_token',
     });
     assert.approximately(update.user.updatedAt.getTime(), new Date().getTime(), 100);
   });

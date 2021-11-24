@@ -1,11 +1,9 @@
-import { Rsvp } from '../src/db/models/RSVP';
-import { User } from '../src/db/models/User';
+import { Rsvp, User, Event } from 'comeunitymodels';
 import { DB } from '../src/db/db';
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient } from 'mongodb';
 import { UserService } from '../src/db/services/user.service';
 import { RsvpService } from '../src/db/services/rsvp.service';
 import { EventService } from '../src/db/services/event.service';
-import { Event } from '../src/db/models/Event';
 
 export class MockDB {
   private static db: DB | null;
@@ -43,11 +41,13 @@ export class MockDB {
   private static async CreateMockDB(): Promise<DB> {
     const client = await MongoClient.connect('mongodb://localhost:27017/?readPreference=primary&ssl=false');
     const db = client.db(`ComeUnityTest-${new Date().getTime()}`);
+    const events = new EventService(db, db.collection<Event>(EventService.collectionName));
+    await events.init();
     return {
       client,
       db,
       users: new UserService(db, db.collection<User>(UserService.collectionName)),
-      events: new EventService(db, db.collection<Event>(EventService.collectionName)),
+      events,
       rsvps: new RsvpService(db, db.collection<Rsvp>(RsvpService.collectionName)),
     };
   }

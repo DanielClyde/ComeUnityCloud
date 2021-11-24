@@ -1,24 +1,24 @@
 import { Db } from 'mongodb';
 import { MongoClient } from 'mongodb';
-import { Event } from './models/Event';
-import { Rsvp } from './models/RSVP';
-import { User } from './models/User';
+import { User, Event, Rsvp } from 'comeunitymodels';
 import { EventService } from './services/event.service';
 import { RsvpService } from './services/rsvp.service';
 import { UserService } from './services/user.service';
 
-const MONGO_URI = 'mongodb+srv://comeUnityUser:kF8HwWgWgfFXupD.rXgd3e3v@cluster0.qabeq.mongodb.net/cloud?retryWrites=true&w=majority';
-const DB_NAME = 'cloud';
+const MONGO_LOCAL_URI = 'mongodb://localhost:27017/?readPreference=primary&ssl=false';
+const LOCAL_DB_NAME = 'cloud';
 
 export async function CreateDB(): Promise<DB> {
-  console.log('Connecting to DB...');
-  const client = await MongoClient.connect(MONGO_URI);
-  const db = client.db(DB_NAME);
+  console.log('Connecting to DB...', process.env.MONGO_URI || MONGO_LOCAL_URI);
+  const client = await MongoClient.connect(process.env.MONGO_URI || MONGO_LOCAL_URI);
+  const db = client.db(process.env.DB_NAME || LOCAL_DB_NAME);
+  const events = new EventService(db, db.collection<Event>(EventService.collectionName));
+  await events.init();
   return {
     client,
     db,
     users: new UserService(db, db.collection<User>(UserService.collectionName)),
-    events: new EventService(db, db.collection<Event>(EventService.collectionName)),
+    events,
     rsvps: new RsvpService(db, db.collection<Rsvp>(RsvpService.collectionName)),
   }
 }
