@@ -62,9 +62,13 @@ export class EventRouter {
   }
 
   public async findByDistance(req: Request, res: Response) {
-    // TODO: write this
-    const events: Event[] = await this.db.events.collection.find({ deletedAt: { $exists: false } }).toArray();
-    res.send({ success: true, events });
+    if (req.query.long && req.query.lat) {
+      const events: Event[] = await this.db.events.findByDistance([+req.query.long, +req.query.lat], 1000 * 100);
+      res.send({ success: true, events });
+    } else {
+      const events: Event[] = await this.db.events.collection.find({ deletedAt: { $exists: false } }).toArray();
+      res.send({ success: true, events });
+    }
   }
 
   public async createEvent(req: Request, res: Response) {

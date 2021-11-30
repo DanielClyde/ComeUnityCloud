@@ -63,7 +63,7 @@ export class EventService {
     ]).toArray();
     return docs.map((d: any) => {
       const e = new Event(d);
-      e.distanceInMeters = d.distanceInMeters;
+      e.distanceInMeters = Math.floor(d.distanceInMeters);
       return e;
     });
   }
