@@ -26,7 +26,7 @@ export class WebServer {
     this.authRouter = new AuthRouter(db);
     this.userRouter = new UserRouter(db, this.sns);
     this.eventRouter = new EventRouter(db, this.sns, this.s3);
-    this.rsvpRouter = new RsvpRouter(db);
+    this.rsvpRouter = new RsvpRouter(db, this.sns);
     this.app = express();
     this.configureWebApp();
     this.setupRouters();
@@ -41,7 +41,7 @@ export class WebServer {
         '*',
         'http://udownmobile.com',
         'https://udownmobile.com',
-        'capacitor://udownapp.com',
+        'capacitor://udownmobile.com',
         'http://localhost:4200',
         'http://10.0.0.104:4200',
       ],

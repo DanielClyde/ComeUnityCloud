@@ -1,9 +1,11 @@
+import { SNSAdapter } from './../adapters/sns.adapter';
 import { AuthMiddleware } from './AuthMiddleware';
 import { Application, Request, Response } from 'express';
 import { DB } from '../../db/db';
 
 export class RsvpRouter {
   private db: DB;
+  private sns: SNSAdapter;
 
   public route(app: Application) {
     app.get(
@@ -31,8 +33,9 @@ export class RsvpRouter {
     );
   }
 
-  constructor(db: DB) {
+  constructor(db: DB, sns: SNSAdapter) {
     this.db = db;
+    this.sns = sns;
   }
 
   async updateRsvpNotificationPreferences(req: Request, res: Response) {
@@ -50,6 +53,18 @@ export class RsvpRouter {
 
   async createRsvp(req: Request, res: Response) {
     const { success, rsvp } = await this.db.rsvps.createRsvp(req.body);
+    if (success && rsvp?.eventId) {
+      const event = await this.db.events.findById(rsvp.eventId);
+      if (event?.createdBy) {
+        const creator = await this.db.users.findById(event?.createdBy);
+        const rsvper = await this.db.users.findById(rsvp.userId);
+        if (creator?.device.notificationEndpointArn) {
+          const message = (rsvper ? (rsvper.firstname + ' ' + rsvper.lastname + ' ') : 'Someone ') +
+          `has RSVP\'d to your event "${event.title}"`;
+          this.sns.sendNotification(creator.device.notificationEndpointArn, message);
+        }
+      }
+    }
     res.send({ success, rsvp });
   }
 

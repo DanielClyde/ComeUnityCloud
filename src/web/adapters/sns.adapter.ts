@@ -22,10 +22,10 @@ export class SNSAdapter {
     }
   }
 
-  async createApplePlatformEndpoint(deviceToken: string, userId: string): Promise<{ success: boolean, endpointArn?: string }> {
+  async createPlatformEndpoint(deviceToken: string, userId: string, forApple = true): Promise<{ success: boolean, endpointArn?: string }> {
     const input: CreatePlatformEndpointCommandInput = {
       CustomUserData: userId,
-      PlatformApplicationArn: process.env.SNS_APPLE_APP_ENDPOINT,
+      PlatformApplicationArn: forApple ? process.env.SNS_APPLE_APP_ENDPOINT : process.env.SNS_ANDROID_APP_ENDPOINT,
       Token: deviceToken,
     };
     const command = new CreatePlatformEndpointCommand(input);

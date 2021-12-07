@@ -115,7 +115,7 @@ export class UserRouter {
         }
         if (newStats.platform && newStats.pushDeviceToken) {
           console.log('creating new notificationEndpoint', newStats);
-          const createRes = await this.sns.createApplePlatformEndpoint(newStats.pushDeviceToken, originalUser._id);
+          const createRes = await this.sns.createPlatformEndpoint(newStats.pushDeviceToken, originalUser._id, newStats.platform === 'ios');
           console.log('createResult', createRes);
           if (createRes.success && createRes.endpointArn) {
             newStats.notificationEndpointArn = createRes.endpointArn;

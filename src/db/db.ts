@@ -13,13 +13,15 @@ export async function CreateDB(): Promise<DB> {
   const client = await MongoClient.connect(process.env.MONGO_URI || MONGO_LOCAL_URI);
   const db = client.db(process.env.DB_NAME || LOCAL_DB_NAME);
   const events = new EventService(db, db.collection<Event>(EventService.collectionName));
+  const users = new UserService(db, db.collection<User>(UserService.collectionName));
+  const rsvps = new RsvpService(db, db.collection<Rsvp>(RsvpService.collectionName));
   await events.init();
   return {
     client,
     db,
-    users: new UserService(db, db.collection<User>(UserService.collectionName)),
+    users,
     events,
-    rsvps: new RsvpService(db, db.collection<Rsvp>(RsvpService.collectionName)),
+    rsvps,
   }
 }
 export interface DB {
