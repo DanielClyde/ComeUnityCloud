@@ -54,6 +54,7 @@ export class WebServer {
     this.eventRouter.route(this.app);
     this.rsvpRouter.route(this.app);
     console.log('path', path.join(__dirname, '../../public'));
+    this.app.use('/privacy-policy', express.static(path.join(__dirname, '../../privacy')))
     this.app.use('/', express.static(path.join(__dirname, '../../public')));
     this.app.use('/*', express.static(path.join(__dirname, '../../public')));
   }
