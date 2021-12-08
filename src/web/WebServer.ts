@@ -39,9 +39,9 @@ export class WebServer {
     this.app.use(cors({
       origin: [
         '*',
+        'capacitor://udownmobile.com',
         'http://udownmobile.com',
         'https://udownmobile.com',
-        'capacitor://udownmobile.com',
         'http://localhost:4200',
         'http://10.0.0.104:4200',
       ],
