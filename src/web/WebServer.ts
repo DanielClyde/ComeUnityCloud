@@ -33,8 +33,8 @@ export class WebServer {
   }
 
   private configureWebApp(): void {
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(bodyParser.json({limit: '50mb'}));
+    this.app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
     this.app.use(compression());
     this.app.use(cors({
       origin: [
@@ -44,6 +44,7 @@ export class WebServer {
         'https://udownmobile.com',
         'http://localhost:4200',
         'http://10.0.0.104:4200',
+        'http://129.123.251.187:4200'
       ],
     }));
   }
